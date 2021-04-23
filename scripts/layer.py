@@ -13,7 +13,9 @@ def BatchActivate(x):
 
 def convolution_block_dropblock(x, filters, size, strides=(1, 1), padding='same', activation=True, keep_prob=0.9,
                                 block_size=7):
+    print("x.get_shape() 00:", x.get_shape())
     x = Conv2D(filters, size, strides=strides, padding=padding)(x)
+    print("x.get_shape() 0:", x.get_shape())
     x = DropBlock2D(block_size=block_size, keep_prob=keep_prob)(x)
     if activation:
         x = BatchActivate(x)
@@ -24,14 +26,13 @@ def convolution_block_dropblock(x, filters, size, strides=(1, 1), padding='same'
 def residual_drop_block(blockInput, num_filters=16, batch_activate=False, keep_prob=0.9, block_size=7):
     x = BatchActivate(blockInput)
     x = convolution_block_dropblock(x, num_filters, (3, 3), keep_prob=keep_prob, block_size=block_size)
-    x = convolution_block_dropblock(x, num_filters, (3, 3), activation=False, keep_prob=keep_prob,
-                                    block_size=block_size)
+    x = convolution_block_dropblock(x, num_filters, (3, 3), activation=False, keep_prob=keep_prob, block_size=block_size)
+
     print("blockInput.get_shape() :", blockInput.get_shape())
     print("x.get_shape() :", x.get_shape())
     if blockInput.get_shape().as_list()[0] != x.get_shape().as_list()[0]:
         blockInput = Conv2D(num_filters, (1, 1), activation=None, padding="same")(blockInput)
 
-        print("blockInput.get_shape() 1:", blockInput.get_shape())
     x = Add()([x, blockInput])
     if batch_activate:
         x = BatchActivate(x)
