@@ -26,19 +26,16 @@ def CARUNet(input_size=(512, 512, 3), start_neurons=16, keep_prob=0.8, block_siz
     # expansive path
     deconv3 = Conv2DTranspose(start_neurons * 4, (3, 3), strides=(2, 2), padding="same")(convm)
     uconv3 = concatenate([deconv3, meca_block(conv3)])
-
     uconv3 = residual_drop_block(uconv3, start_neurons * 4, False, block_size=block_size, keep_prob=keep_prob)
     uconv3 = RCAB(uconv3, keep_prob=keep_prob, block_size=block_size)
 
     deconv2 = Conv2DTranspose(start_neurons * 2, (3, 3), strides=(2, 2), padding="same")(uconv3)
     uconv2 = concatenate([deconv2, meca_block(conv2)])
-
     uconv2 = residual_drop_block(uconv2, start_neurons * 2, False, block_size=block_size, keep_prob=keep_prob)
     uconv2 = RCAB(uconv2, keep_prob=keep_prob, block_size=block_size)
 
     deconv1 = Conv2DTranspose(start_neurons * 1, (3, 3), strides=(2, 2), padding="same")(uconv2)
     uconv1 = concatenate([deconv1, meca_block(conv1)])
-
     uconv1 = residual_drop_block(uconv1, start_neurons * 1, False, block_size=block_size, keep_prob=keep_prob)
     uconv1 = RCAB(uconv1, keep_prob=keep_prob, block_size=block_size)
 
