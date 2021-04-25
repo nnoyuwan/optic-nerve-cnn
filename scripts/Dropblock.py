@@ -1,5 +1,5 @@
-import keras
-import keras.backend as K
+import tensorflow.keras as keras
+import tensorflow.keras.backend as K
 
 
 class DropBlock1D(keras.layers.Layer):
