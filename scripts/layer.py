@@ -14,7 +14,7 @@ def BatchActivate(x):
 def convolution_block_dropblock(x, filters, size, strides=(1, 1), padding='same', activation=True, keep_prob=0.9,
                                 block_size=7):
     # print("x.get_shape() 00:", x.get_shape())
-    x = Conv2D(filters, size, strides=strides, padding=padding, data_format='channels_last')(x)
+    x = Conv2D(filters, size, strides=strides, padding=padding, data_format='channels_first')(x)
     # print("x.get_shape() 0:", x.get_shape())
     x = DropBlock2D(block_size=block_size, keep_prob=keep_prob)(x)
     if activation:
@@ -30,8 +30,8 @@ def residual_drop_block(blockInput, num_filters=16, batch_activate=False, keep_p
 
     # print("blockInput.get_shape() :", blockInput.get_shape())
     # print("x.get_shape() :", x.get_shape())
-    if blockInput.get_shape().as_list()[-1] != x.get_shape().as_list()[-1]:
-        blockInput = Conv2D(num_filters, (1, 1), activation=None, padding="same", data_format="channels_last")(blockInput)
+    if blockInput.get_shape().as_list()[1] != x.get_shape().as_list()[1]:
+        blockInput = Conv2D(num_filters, (1, 1), activation=None, padding="same", data_format="channels_first")(blockInput)
 
     x = Add()([x, blockInput])
     if batch_activate:
@@ -40,7 +40,7 @@ def residual_drop_block(blockInput, num_filters=16, batch_activate=False, keep_p
 
 
 def RCAB(input, batch_activate=True, block_size=7, keep_prob=0.9):
-    num_filters = input.get_shape().as_list()[-1]
+    num_filters = input.get_shape().as_list()[1]
     f = BatchActivate(input)
     f = convolution_block_dropblock(f, num_filters, (3, 3), keep_prob=keep_prob, block_size=block_size)
     f = convolution_block_dropblock(f, num_filters, (3, 3), activation=False, keep_prob=keep_prob,
