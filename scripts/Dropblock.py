@@ -1,5 +1,7 @@
-import tensorflow.keras as keras
-import tensorflow.keras.backend as K
+import keras as keras
+import keras.backend as K
+import tensorflow
+from keras.backend.common import normalize_data_format
 
 
 class DropBlock1D(keras.layers.Layer):
@@ -22,7 +24,7 @@ class DropBlock1D(keras.layers.Layer):
         self.block_size = block_size
         self.keep_prob = keep_prob
         self.sync_channels = sync_channels
-        self.data_format = K.normalize_data_format(data_format)
+        self.data_format = normalize_data_format(data_format)
         self.input_spec = keras.engine.base_layer.InputSpec(ndim=3)
         self.supports_masking = True
 
@@ -113,12 +115,14 @@ class DropBlock2D(keras.layers.Layer):
         :param data_format: 'channels_first' or 'channels_last' (default).
         :param kwargs: Arguments for parent class.
         """
-        super(DropBlock2D, self).__init__(**kwargs)
+        # super(DropBlock2D, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.block_size = block_size
         self.keep_prob = keep_prob
         self.sync_channels = sync_channels
-        self.data_format = K.normalize_data_format(data_format)
-        self.input_spec = keras.engine.base_layer.InputSpec(ndim=4)
+        self.data_format = normalize_data_format(data_format)
+        self.input_spec = tensorflow.keras.layers.InputSpec(ndim=4)
+        # self.input_spec = tfk.layers.InputSpec(ndim=4)
         self.supports_masking = True
 
     def get_config(self):
@@ -126,7 +130,8 @@ class DropBlock2D(keras.layers.Layer):
                   'keep_prob': self.keep_prob,
                   'sync_channels': self.sync_channels,
                   'data_format': self.data_format}
-        base_config = super(DropBlock2D, self).get_config()
+        # base_config = super(DropBlock2D, self).get_config()
+        base_config = super().get_config()
         return dict(list(base_config.items()) + list(config.items()))
 
     def compute_mask(self, inputs, mask=None):
