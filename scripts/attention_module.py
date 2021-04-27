@@ -1,3 +1,4 @@
+# from layer import *
 from layer import *
 from keras.layers import *
 
